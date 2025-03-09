@@ -140,6 +140,18 @@ body {
     flex: 1 1 400px;
 }
 
+.two-column > div h3:first-child {
+    margin-top: 0;
+}
+
+.two-column > div ul {
+    margin-bottom: 1rem;
+}
+
+.two-column > div p:last-child {
+    margin-bottom: 0;
+}
+
 /* Info Boxes */
 .info-box {
     background-color: var(--light-color);
@@ -191,9 +203,38 @@ body {
 /* Interactive Elements */
 .interactive-element {
     background-color: #eaf2f8;
-    padding: 1.5rem;
+    padding: 1.8rem;
     border-radius: var(--border-radius);
     margin-top: 1.5rem;
+    border-left: 4px solid var(--accent-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.interactive-element:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+.interactive-element h3 {
+    margin-top: -0.3rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.interactive-element ol {
+    margin: 0;
+    padding-left: 1.5rem;
+    list-style-position: outside;
+}
+
+.interactive-element ol li {
+    margin-bottom: 0.8rem;
+    padding-left: 0.5rem;
+    line-height: 1.4;
+}
+
+.interactive-element ol li:last-child {
+    margin-bottom: 0;
 }
 
 /* Image Container */
