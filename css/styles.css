@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+html {
+    overscroll-behavior: contain;
+}
+
 :root {
     --primary-color: #000000;
     --secondary-color: #0066CC;
@@ -28,6 +32,8 @@ body {
     color: var(--text-color);
     background-color: var(--background-color);
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .container {
@@ -514,6 +520,116 @@ footer p {
     
     .poster-nav ul {
         gap: 1rem;
+    }
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 0 10px;
+    }
+    
+    .poster-header h1 {
+        font-size: 1.8rem;
+        padding: 0 10px;
+    }
+    
+    .poster-nav {
+        padding: 0.5rem 0;
+    }
+    
+    .poster-nav ul {
+        gap: 0.5rem;
+        padding: 5px;
+    }
+    
+    .poster-nav a {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .poster-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .two-column {
+        gap: 1.5rem;
+    }
+    
+    .simulator-controls {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .simulation-container {
+        gap: 1.5rem;
+    }
+    
+    .image-options {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .image-option {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .interactive-element {
+        padding: 1.5rem;
+    }
+    
+    .lens-details li {
+        padding-left: 0.25rem;
+    }
+    
+    /* Improve simulation canvases on mobile */
+    .simulation-view canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+    
+    /* Adjust FM100 test for mobile */
+    .fm100-color-block {
+        width: 18px;
+        height: 18px;
+    }
+    
+    /* Make lens model container responsive */
+    #lens-model-container {
+        height: 250px;
+    }
+    
+    /* Improve chart responsiveness */
+    #expected-results-chart {
+        height: auto;
+        min-height: 250px;
+    }
+    
+    /* Fix scrolling on mobile */
+    .cvd-simulator {
+        overflow-x: hidden;
+        padding: 1.5rem;
+    }
+}
+
+/* Add better touch support for interactive elements */
+@media (hover: none) {
+    .fm100-color-block {
+        cursor: move;
+    }
+    
+    .image-option:active {
+        background-color: var(--accent-color);
+        color: white;
+    }
+    
+    .poster-nav a:active {
+        color: var(--accent-color);
     }
 }
 
