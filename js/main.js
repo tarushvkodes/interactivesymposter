@@ -526,20 +526,37 @@ function setupFM100Example() {
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     
-    // Create color blocks
-    shuffled.forEach(color => {
+    // Create color blocks with enhanced drag and drop
+    shuffled.forEach((color, index) => {
         const block = document.createElement('div');
-        block.style.width = '20px';
-        block.style.height = '20px';
+        block.className = 'fm100-color-block';
         block.style.backgroundColor = color;
-        block.style.cursor = 'pointer';
-        block.style.border = '1px solid #ddd';
+        block.setAttribute('data-color', color);
+        block.setAttribute('data-position', index.toString());
         
-        // Add drag and drop capability (simplified)
-        block.draggable = true;
+        // Drag events
         block.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', color);
-            e.dataTransfer.effectAllowed = 'move';
+            block.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                color: color,
+                position: index,
+                sourceId: block.id
+            }));
+        });
+        
+        block.addEventListener('dragend', () => {
+            block.classList.remove('dragging');
+            document.querySelectorAll('.fm100-color-block').forEach(b => {
+                b.classList.remove('drag-over');
+            });
+        });
+        
+        // Drop events
+        block.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            if (!block.classList.contains('dragging')) {
+                block.classList.add('drag-over');
+            }
         });
         
         block.addEventListener('dragover', (e) => {
@@ -547,19 +564,31 @@ function setupFM100Example() {
             e.dataTransfer.dropEffect = 'move';
         });
         
+        block.addEventListener('dragleave', () => {
+            block.classList.remove('drag-over');
+        });
+        
         block.addEventListener('drop', (e) => {
             e.preventDefault();
-            const sourceColor = e.dataTransfer.getData('text/plain');
+            block.classList.remove('drag-over');
             
-            // Swap colors
-            const source = Array.from(fm100Div.children).find(el => el.style.backgroundColor === sourceColor);
-            if (source) {
+            try {
+                const sourceData = JSON.parse(e.dataTransfer.getData('text/plain'));
                 const targetColor = block.style.backgroundColor;
-                block.style.backgroundColor = sourceColor;
-                source.style.backgroundColor = targetColor;
+                const targetPosition = parseInt(block.getAttribute('data-position'));
+                
+                // Swap the colors
+                block.style.backgroundColor = sourceData.color;
+                const sourceBlock = document.querySelector(`.fm100-color-block[data-position="${sourceData.position}"]`);
+                if (sourceBlock && sourceBlock !== block) {
+                    sourceBlock.style.backgroundColor = targetColor;
+                }
+            } catch (error) {
+                console.error('Error during color swap:', error);
             }
         });
         
+        block.draggable = true;
         fm100Div.appendChild(block);
     });
     
@@ -587,11 +616,11 @@ function setupFM100Example() {
     solveButton.style.cursor = 'pointer';
     
     solveButton.addEventListener('click', () => {
-        // Replace with ordered colors
-        const blocks = fm100Div.children;
-        for (let i = 0; i < blocks.length; i++) {
-            blocks[i].style.backgroundColor = colors[i];
-        }
+        const blocks = Array.from(fm100Div.children);
+        blocks.forEach((block, i) => {
+            block.style.backgroundColor = colors[i];
+            block.setAttribute('data-position', i.toString());
+        });
     });
     
     const randomizeButton = document.createElement('button');
@@ -603,17 +632,17 @@ function setupFM100Example() {
     randomizeButton.style.cursor = 'pointer';
     
     randomizeButton.addEventListener('click', () => {
-        // Re-shuffle the colors
         const newShuffled = [...colors];
         for (let i = newShuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [newShuffled[i], newShuffled[j]] = [newShuffled[j], newShuffled[i]];
         }
         
-        const blocks = fm100Div.children;
-        for (let i = 0; i < blocks.length; i++) {
-            blocks[i].style.backgroundColor = newShuffled[i];
-        }
+        const blocks = Array.from(fm100Div.children);
+        blocks.forEach((block, i) => {
+            block.style.backgroundColor = newShuffled[i];
+            block.setAttribute('data-position', i.toString());
+        });
     });
     
     buttonContainer.appendChild(randomizeButton);

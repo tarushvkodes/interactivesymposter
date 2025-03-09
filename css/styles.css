@@ -545,3 +545,26 @@ footer p {
     margin-bottom: 0.5rem;
     padding-left: 0.5rem;
 }
+
+.fm100-color-block {
+    width: 20px;
+    height: 20px;
+    cursor: grab;
+    border: 1px solid #ddd;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.fm100-color-block:hover {
+    transform: scale(1.1);
+    border-color: var(--accent-color);
+}
+
+.fm100-color-block.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+}
+
+.fm100-color-block.drag-over {
+    border: 2px dashed var(--accent-color);
+    transform: scale(1.1);
+}
