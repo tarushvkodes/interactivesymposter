@@ -161,24 +161,32 @@ function setupExpectedResultsChart() {
     const maxScore = Math.max(...expectedScores);
     
     const chartTitle = document.createElement('h4');
-    chartTitle.textContent = 'Expected Improvement in Test Scores with Different Dye Concentrations (%)';
+    chartTitle.textContent = 'Expected Improvement in Test Scores with Different Dye Concentrations';
+    chartTitle.style.textAlign = 'center';
+    chartTitle.style.marginBottom = '2rem';
     chartContainer.appendChild(chartTitle);
     
     const chartWrapper = document.createElement('div');
     chartWrapper.className = 'chart-wrapper';
     chartWrapper.style.display = 'flex';
-    chartWrapper.style.height = '220px';
+    chartWrapper.style.height = '300px';
     chartWrapper.style.alignItems = 'flex-end';
-    chartWrapper.style.gap = '10px';
-    chartWrapper.style.paddingTop = '20px';
+    chartWrapper.style.gap = '20px';
+    chartWrapper.style.padding = '20px 60px 40px 60px'; // Increased padding for labels
     chartWrapper.style.position = 'relative';
+    chartWrapper.style.backgroundColor = '#fff';
+    chartWrapper.style.borderRadius = '8px';
+    chartWrapper.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
     
-    // Add y-axis label
+    // Fix y-axis label position
     const yAxisLabel = document.createElement('div');
     yAxisLabel.style.position = 'absolute';
-    yAxisLabel.style.transform = 'rotate(-90deg)';
-    yAxisLabel.style.left = '-35px';
+    yAxisLabel.style.transform = 'rotate(-90deg) translateX(-50%)';
+    yAxisLabel.style.transformOrigin = '0 0';
+    yAxisLabel.style.left = '15px';
     yAxisLabel.style.top = '50%';
+    yAxisLabel.style.fontSize = '14px';
+    yAxisLabel.style.whiteSpace = 'nowrap';
     yAxisLabel.textContent = 'Error Score';
     chartWrapper.appendChild(yAxisLabel);
     
@@ -186,20 +194,33 @@ function setupExpectedResultsChart() {
     for (let i = 0; i <= 4; i++) {
         const line = document.createElement('div');
         line.style.position = 'absolute';
-        line.style.left = '30px';
-        line.style.right = '10px';
-        line.style.top = `${20 + (i * 50)}px`;
+        line.style.left = '45px';
+        line.style.right = '15px';
+        line.style.top = `${20 + (i * 65)}px`;
         line.style.borderBottom = '1px dashed #ccc';
+        line.style.zIndex = '1';
         
         const label = document.createElement('span');
         label.style.position = 'absolute';
-        label.style.left = '-25px';
+        label.style.left = '-30px';
         label.style.top = '-10px';
+        label.style.fontSize = '12px';
         label.textContent = `${Math.round((4 - i) * (maxScore / 4))}`;
         line.appendChild(label);
         
         chartWrapper.appendChild(line);
     }
+    
+    // Create bars wrapper for z-index control
+    const barsWrapper = document.createElement('div');
+    barsWrapper.style.display = 'flex';
+    barsWrapper.style.alignItems = 'flex-end';
+    barsWrapper.style.gap = '20px';
+    barsWrapper.style.height = '100%';
+    barsWrapper.style.width = '100%';
+    barsWrapper.style.position = 'relative';
+    barsWrapper.style.zIndex = '2';
+    barsWrapper.style.marginLeft = '15px'; // Add margin to align with grid lines
     
     // Create bars for the chart
     concentrations.forEach((conc, index) => {
@@ -208,13 +229,27 @@ function setupExpectedResultsChart() {
         barContainer.style.flexDirection = 'column';
         barContainer.style.alignItems = 'center';
         barContainer.style.flex = '1';
+        barContainer.style.position = 'relative';
         
         const bar = document.createElement('div');
         const heightPercentage = (expectedScores[index] / maxScore) * 100;
-        bar.style.width = '80%';
+        bar.style.width = '100%';
         bar.style.height = `${heightPercentage}%`;
         bar.style.backgroundColor = '#3498db';
         bar.style.borderRadius = '3px 3px 0 0';
+        bar.style.transition = 'all 0.3s ease';
+        bar.style.cursor = 'pointer';
+        
+        // Add hover effect
+        bar.addEventListener('mouseover', function() {
+            this.style.transform = 'scaleX(1.1)';
+            value.style.opacity = '1';
+        });
+        
+        bar.addEventListener('mouseout', function() {
+            this.style.transform = 'scaleX(1)';
+            value.style.opacity = '0.8';
+        });
         
         // Add value on top of the bar
         const value = document.createElement('div');
@@ -222,11 +257,13 @@ function setupExpectedResultsChart() {
         value.style.marginBottom = '5px';
         value.style.fontWeight = 'bold';
         value.style.fontSize = '12px';
+        value.style.opacity = '0.8';
+        value.style.transition = 'opacity 0.3s ease';
         
         // Add concentration label below the bar
         const label = document.createElement('div');
         label.textContent = `${conc}%`;
-        label.style.marginTop = '5px';
+        label.style.marginTop = '8px';
         label.style.fontSize = '12px';
         
         // Create optimal marker for the best concentration
@@ -237,31 +274,37 @@ function setupExpectedResultsChart() {
             optimal.style.fontSize = '10px';
             optimal.style.fontWeight = 'bold';
             optimal.style.color = '#e74c3c';
-            optimal.style.marginTop = '3px';
+            optimal.style.marginTop = '5px';
             barContainer.appendChild(optimal);
         }
         
         barContainer.appendChild(value);
         barContainer.appendChild(bar);
         barContainer.appendChild(label);
-        chartWrapper.appendChild(barContainer);
+        barsWrapper.appendChild(barContainer);
     });
     
+    chartWrapper.appendChild(barsWrapper);
     chartContainer.appendChild(chartWrapper);
     
-    // Add x-axis label
+    // Fix x-axis label positioning
     const xAxisLabel = document.createElement('div');
     xAxisLabel.style.textAlign = 'center';
-    xAxisLabel.style.marginTop = '20px';
+    xAxisLabel.style.position = 'absolute';
+    xAxisLabel.style.bottom = '10px';
+    xAxisLabel.style.left = '0';
+    xAxisLabel.style.right = '0';
+    xAxisLabel.style.fontSize = '14px';
     xAxisLabel.textContent = 'Dye Concentration (%)';
-    chartContainer.appendChild(xAxisLabel);
+    chartWrapper.appendChild(xAxisLabel);
     
     // Add caption
     const caption = document.createElement('p');
     caption.style.fontSize = '0.8rem';
-    caption.style.marginTop = '10px';
+    caption.style.marginTop = '30px';
     caption.style.fontStyle = 'italic';
     caption.style.textAlign = 'center';
+    caption.style.color = '#666';
     caption.textContent = 'Lower score indicates better color discrimination';
     chartContainer.appendChild(caption);
 }

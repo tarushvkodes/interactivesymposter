@@ -27,7 +27,7 @@ function setupLensComparisonDemo() {
     const infoPanel = document.createElement('div');
     infoPanel.className = 'lens-info-panel';
     infoPanel.style.marginTop = '20px';
-    infoPanel.style.padding = '15px';
+    infoPanel.style.padding = '20px 35px'; // Increased padding
     infoPanel.style.backgroundColor = '#e8f4f8';
     infoPanel.style.borderRadius = '5px';
     infoPanel.style.display = 'none'; // Hidden initially
@@ -36,10 +36,10 @@ function setupLensComparisonDemo() {
     infoPanel.innerHTML = `
         <h4>How the Lens Correction Works</h4>
         <p>Our custom 3D printed lenses use specific dye concentrations to enhance color perception:</p>
-        <ul class="lens-details">
-            <li><strong>Deuteranomaly (Green-Weak):</strong> Green alcohol dye enhances green perception</li>
-            <li><strong>Protanomaly (Red-Weak):</strong> Red alcohol dye enhances red perception</li>
-            <li><strong>Tritanomaly (Blue-Weak):</strong> Blue alcohol dye enhances blue perception</li>
+        <ul class="lens-details" style="list-style-position: outside; margin: 10px 0 10px 20px;">
+            <li style="margin-bottom: 8px"><strong>Deuteranomaly (Green-Weak):</strong> Green alcohol dye enhances green perception</li>
+            <li style="margin-bottom: 8px"><strong>Protanomaly (Red-Weak):</strong> Red alcohol dye enhances red perception</li>
+            <li style="margin-bottom: 8px"><strong>Tritanomaly (Blue-Weak):</strong> Blue alcohol dye enhances blue perception</li>
         </ul>
         <p>The slider demonstrates how different dye concentrations affect color perception. Our research focuses on finding the optimal concentration for each individual's specific CVD type and severity.</p>
         <div class="optimal-range">

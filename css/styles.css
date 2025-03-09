@@ -483,3 +483,13 @@ footer p {
         transition: none !important;
     }
 }
+
+.lens-details {
+    list-style-position: outside;
+    margin-left: 1.5rem !important;
+}
+
+.lens-details li {
+    margin-bottom: 0.5rem;
+    padding-left: 0.5rem;
+}
