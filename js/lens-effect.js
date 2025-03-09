@@ -71,7 +71,7 @@ function setupLensComparisonDemo() {
     const deuterHighlight = document.createElement('div');
     deuterHighlight.style.position = 'absolute';
     deuterHighlight.style.left = '15%';
-    deuterHighlight.style.width = '10%';
+    deuterHighlight.style.width = '10%'; // This represents 15-25% range
     deuterHighlight.style.height = '100%';
     deuterHighlight.style.backgroundColor = '#2ecc71';
     deuterHighlight.style.borderRadius = '5px';
@@ -89,7 +89,7 @@ function setupLensComparisonDemo() {
     const protanHighlight = document.createElement('div');
     protanHighlight.style.position = 'absolute';
     protanHighlight.style.left = '10%';
-    protanHighlight.style.width = '10%';
+    protanHighlight.style.width = '10%'; // This represents 10-20% range
     protanHighlight.style.height = '100%';
     protanHighlight.style.backgroundColor = '#e74c3c';
     protanHighlight.style.borderRadius = '5px';
@@ -106,7 +106,7 @@ function setupLensComparisonDemo() {
     const tritanHighlight = document.createElement('div');
     tritanHighlight.style.position = 'absolute';
     tritanHighlight.style.left = '20%';
-    tritanHighlight.style.width = '10%';
+    tritanHighlight.style.width = '10%'; // This represents 20-30% range
     tritanHighlight.style.height = '100%';
     tritanHighlight.style.backgroundColor = '#3498db';
     tritanHighlight.style.borderRadius = '5px';
