@@ -12,30 +12,116 @@ document.addEventListener('DOMContentLoaded', function() {
  * Initialize the CVD simulation interface
  */
 function initCVDSimulation() {
-    // Load the initial image
-    loadSimulationImage('nature');
+    // Set a default CVD type
+    document.getElementById('cvd-type').value = 'deuteranomaly';
     
-    // Set up event listeners for controls
-    document.getElementById('cvd-type').addEventListener('change', updateSimulation);
-    document.getElementById('lens-strength').addEventListener('input', updateLensStrength);
+    // Load the initial image with a fade effect
+    loadSimulationImage('nature', true);
     
-    // Set up event listeners for image selection buttons
+    // Set up event listeners for controls with debouncing
+    let debounceTimer;
+    document.getElementById('cvd-type').addEventListener('change', function() {
+        clearTimeout(debounceTimer);
+        fadeOutCanvases();
+        debounceTimer = setTimeout(() => {
+            processCurrentImage();
+        }, 300);
+    });
+    
+    document.getElementById('lens-strength').addEventListener('input', function() {
+        const strengthValue = this.value;
+        const strengthDisplay = document.getElementById('lens-strength-value');
+        
+        // Smooth number transition
+        animateNumber(
+            parseInt(strengthDisplay.textContent), 
+            strengthValue,
+            (value) => strengthDisplay.textContent = value + '%'
+        );
+        
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            processCurrentImage();
+        }, 100);
+    });
+    
+    // Enhanced image selection buttons
     const imageButtons = document.querySelectorAll('.image-option');
     imageButtons.forEach(button => {
         button.addEventListener('click', function() {
             const imageType = this.getAttribute('data-image');
-            loadSimulationImage(imageType);
             
-            // Update active button styling
-            imageButtons.forEach(btn => btn.classList.remove('active'));
+            // Smooth button transition
+            imageButtons.forEach(btn => {
+                btn.style.transition = 'all 0.3s ease';
+                btn.classList.remove('active');
+            });
             this.classList.add('active');
+            
+            fadeOutCanvases();
+            setTimeout(() => {
+                loadSimulationImage(imageType);
+            }, 300);
         });
     });
     
-    // Mark the first button as active initially
+    // Mark the first button as active initially with animation
     if (imageButtons.length > 0) {
         imageButtons[0].classList.add('active');
     }
+}
+
+// Animation helper functions
+function fadeOutCanvases() {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+        canvas.style.transition = 'opacity 0.3s ease';
+        canvas.style.opacity = '0';
+    });
+}
+
+function fadeInCanvases() {
+    const canvases = document.querySelectorAll('canvas');
+    canvases.forEach(canvas => {
+        canvas.style.opacity = '1';
+    });
+}
+
+function animateNumber(start, end, callback) {
+    const duration = 300;
+    const startTime = performance.now();
+    
+    const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(start + (end - start) * easeOutCubic);
+        
+        callback(current);
+        
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    };
+    
+    requestAnimationFrame(animate);
+}
+
+/**
+ * Get the currently selected image type
+ */
+function getCurrentImage() {
+    const activeButton = document.querySelector('.image-option.active');
+    return activeButton ? activeButton.getAttribute('data-image') : 'nature';
+}
+
+/**
+ * Process the currently displayed image with the selected effects
+ */
+function processCurrentImage() {
+    loadSimulationImage(getCurrentImage());
 }
 
 /**
@@ -43,106 +129,222 @@ function initCVDSimulation() {
  * @param {string} imageType - Type of image to load (nature, ishihara, traffic, chart)
  */
 function loadSimulationImage(imageType) {
-    // Define the images
     const images = {
-        nature: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Mandarin_Ducks_Central_Park_crop.jpg/640px-Mandarin_Ducks_Central_Park_crop.jpg',
-        ishihara: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Ishihara_9.png/640px-Ishihara_9.png',
-        traffic: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Traffic_lights_4_states.svg/640px-Traffic_lights_4_states.svg.png',
-        chart: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Color_star-en.svg/640px-Color_star-en.svg.png'
+        nature: './images/nature.jpg',
+        ishihara: './images/ishihara.png',
+        traffic: './images/trafficlight.jpg',
+        chart: './images/colorwheel.png'
     };
     
+    console.log("Starting to load image:", images[imageType]);
+    
+    // Create new image and wait for it to load
     const img = new Image();
-    img.crossOrigin = 'Anonymous'; // Allow processing images from other domains
     
+    // Show loading state with dimensions feedback
+    const canvases = ['original-canvas', 'cvd-canvas', 'corrected-canvas'];
+    canvases.forEach(id => {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+            console.log(`Canvas ${id} dimensions:`, canvas.width, 'x', canvas.height);
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#666';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '14px Arial';
+            ctx.fillText('Loading...', canvas.width/2, canvas.height/2);
+        } else {
+            console.error(`Canvas ${id} not found`);
+        }
+    });
+
+    // Wait for image to load
     img.onload = function() {
-        // Get the canvases
-        const originalCanvas = document.getElementById('original-canvas');
-        const cvdCanvas = document.getElementById('cvd-canvas');
-        const correctedCanvas = document.getElementById('corrected-canvas');
+        console.log("Image loaded successfully:", imageType);
+        console.log("Image natural dimensions:", img.naturalWidth, "x", img.naturalHeight);
         
-        // Resize canvases to match the image aspect ratio
-        const aspectRatio = img.width / img.height;
-        const canvasHeight = 200; // Fixed height as defined in CSS
-        const canvasWidth = Math.round(canvasHeight * aspectRatio);
+        // Draw image immediately to test if it's loaded correctly
+        const testCanvas = document.createElement('canvas');
+        testCanvas.width = img.naturalWidth;
+        testCanvas.height = img.naturalHeight;
+        const testCtx = testCanvas.getContext('2d');
+        testCtx.drawImage(img, 0, 0);
         
-        originalCanvas.width = canvasWidth;
-        originalCanvas.height = canvasHeight;
-        cvdCanvas.width = canvasWidth;
-        cvdCanvas.height = canvasHeight;
-        correctedCanvas.width = canvasWidth;
-        correctedCanvas.height = canvasHeight;
-        
-        // Draw the original image
-        const origCtx = originalCanvas.getContext('2d');
-        origCtx.drawImage(img, 0, 0, canvasWidth, canvasHeight);
-        
-        // Apply simulations
-        updateSimulation();
+        try {
+            // Test if we can get image data (this will fail if CORS is blocking)
+            testCtx.getImageData(0, 0, 1, 1);
+            processLoadedImage(img);
+        } catch (e) {
+            console.error('CORS error when accessing image data:', e);
+            // Try without crossOrigin as a fallback
+            const retryImg = new Image();
+            retryImg.onload = function() {
+                processLoadedImage(retryImg);
+            };
+            retryImg.src = img.src;
+        }
     };
     
-    // Load the selected image
+    img.onerror = function(e) {
+        console.error('Failed to load image:', imageType, images[imageType], e);
+        
+        // Show error state in canvases
+        canvases.forEach(id => {
+            const canvas = document.getElementById(id);
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#fee';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#c00';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = '14px Arial';
+                ctx.fillText('Error loading image', canvas.width/2, canvas.height/2);
+                ctx.font = '12px Arial';
+                ctx.fillText('Please check console for details', canvas.width/2, canvas.height/2 + 20);
+            }
+        });
+    };
+    
+    // Force initial canvas setup with explicit dimensions
+    canvases.forEach(id => {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+            canvas.width = 400;
+            canvas.height = 300;
+            canvas.style.width = '400px';
+            canvas.style.height = '300px';
+        }
+    });
+
+    // Load the image with crossOrigin setting for first attempt
+    img.crossOrigin = "anonymous";
     img.src = images[imageType];
+    
+    // Force a reload if the image is cached
+    if (img.complete) {
+        img.onload();
+    }
 }
 
 /**
- * Updates the lens strength indicator
+ * Process a loaded image with CVD simulation and lens effects
+ * @param {Image} img - The loaded image object
  */
-function updateLensStrength() {
-    const strengthValue = document.getElementById('lens-strength').value;
-    document.getElementById('lens-strength-value').textContent = strengthValue + '%';
+function processLoadedImage(img) {
+    const canvases = ['original-canvas', 'cvd-canvas', 'corrected-canvas'];
+    const displayWidth = 400;
+    const displayHeight = 300;
     
-    updateSimulation();
+    // Set up canvases with initial opacity 0
+    canvases.forEach(id => {
+        const canvas = document.getElementById(id);
+        if (canvas) {
+            canvas.style.opacity = '0';
+            canvas.style.transition = 'opacity 0.3s ease';
+            canvas.width = displayWidth;
+            canvas.height = displayHeight;
+        }
+    });
+
+    // Process images with a slight delay for smooth transition
+    setTimeout(() => {
+        try {
+            // Process original canvas
+            const originalCanvas = document.getElementById('original-canvas');
+            const origCtx = originalCanvas.getContext('2d');
+            origCtx.drawImage(img, 0, 0, displayWidth, displayHeight);
+            
+            // Process CVD simulation
+            const cvdCanvas = document.getElementById('cvd-canvas');
+            const cvdCtx = cvdCanvas.getContext('2d');
+            cvdCtx.drawImage(img, 0, 0, displayWidth, displayHeight);
+            const cvdImageData = cvdCtx.getImageData(0, 0, displayWidth, displayHeight);
+            
+            const cvdType = document.getElementById('cvd-type').value;
+            const cvdMatrix = getCVDMatrix(cvdType);
+            applyColorMatrix(cvdImageData.data, cvdMatrix);
+            cvdCtx.putImageData(cvdImageData, 0, 0);
+            
+            // Process corrected view
+            const correctedCanvas = document.getElementById('corrected-canvas');
+            const corrCtx = correctedCanvas.getContext('2d');
+            corrCtx.drawImage(img, 0, 0, displayWidth, displayHeight);
+            const correctedImageData = corrCtx.getImageData(0, 0, displayWidth, displayHeight);
+            
+            // Apply corrections
+            const lensStrength = parseInt(document.getElementById('lens-strength').value) / 100;
+            if (lensStrength > 0 && cvdType !== 'normal') {
+                const origImageData = origCtx.getImageData(0, 0, displayWidth, displayHeight);
+                applyLensCorrection(origImageData.data, correctedImageData.data, lensStrength, cvdType);
+            } else {
+                applyColorMatrix(correctedImageData.data, cvdMatrix);
+            }
+            
+            corrCtx.putImageData(correctedImageData, 0, 0);
+            
+            // Fade in all canvases
+            fadeInCanvases();
+            
+        } catch (error) {
+            console.error('Error processing image:', error);
+        }
+    }, 300);
 }
 
 /**
- * Apply the CVD simulation and lens correction
+ * Apply lens correction to image data
+ * @param {Uint8ClampedArray} origData - Original image data
+ * @param {Uint8ClampedArray} corrData - Data to apply correction to
+ * @param {number} strength - Strength of correction (0-1)
+ * @param {string} cvdType - Type of color vision deficiency
  */
-function updateSimulation() {
-    const originalCanvas = document.getElementById('original-canvas');
-    const cvdCanvas = document.getElementById('cvd-canvas');
-    const correctedCanvas = document.getElementById('corrected-canvas');
+function applyLensCorrection(origData, corrData, strength, cvdType) {
+    const length = corrData.length;
     
-    // Get selected CVD type
-    const cvdType = document.getElementById('cvd-type').value;
-    
-    // Get lens strength
-    const lensStrength = parseInt(document.getElementById('lens-strength').value) / 100;
-    
-    // Get the image data from the original canvas
-    const origCtx = originalCanvas.getContext('2d');
-    const imageData = origCtx.getImageData(0, 0, originalCanvas.width, originalCanvas.height);
-    const pixels = imageData.data;
-    
-    // Create two copies of the image data - one for CVD simulation and one for correction
-    const cvdImageData = new ImageData(new Uint8ClampedArray(pixels), imageData.width, imageData.height);
-    const correctedImageData = new ImageData(new Uint8ClampedArray(pixels), imageData.width, imageData.height);
-    
-    // Apply CVD simulation
-    simulateCVD(cvdImageData.data, cvdType);
-    
-    // Apply CVD simulation and lens correction to the corrected image
-    simulateCVDWithCorrection(correctedImageData.data, cvdType, lensStrength);
-    
-    // Draw the simulated images
-    const cvdCtx = cvdCanvas.getContext('2d');
-    cvdCtx.putImageData(cvdImageData, 0, 0);
-    
-    const correctedCtx = correctedCanvas.getContext('2d');
-    correctedCtx.putImageData(correctedImageData, 0, 0);
+    // Use a more efficient approach with fewer branches inside the loop
+    for (let i = 0; i < length; i += 4) {
+        const origR = origData[i];
+        const origG = origData[i + 1];
+        const origB = origData[i + 2];
+        
+        const simulatedR = corrData[i];
+        const simulatedG = corrData[i + 1];
+        const simulatedB = corrData[i + 2];
+        
+        // Calculate color differences
+        const diffR = origR - simulatedR;
+        const diffG = origG - simulatedG;
+        const diffB = origB - simulatedB;
+        
+        // Apply lens correction based on CVD type
+        const enhancedStrength = strength * 2;
+        
+        if (cvdType === 'deuteranomaly') { // Green deficiency
+            corrData[i + 1] = clamp(simulatedG + diffG * enhancedStrength);
+        } else if (cvdType === 'protanomaly') { // Red deficiency
+            corrData[i] = clamp(simulatedR + diffR * enhancedStrength);
+        } else if (cvdType === 'tritanomaly') { // Blue deficiency
+            corrData[i + 2] = clamp(simulatedB + diffB * enhancedStrength);
+        }
+    }
 }
 
 /**
- * Apply colorblindness simulation to image data
- * @param {Uint8ClampedArray} pixels - The image pixel data
- * @param {string} type - The type of CVD to simulate
+ * Clamp a value between 0 and 255
  */
-function simulateCVD(pixels, type) {
-    // If normal vision is selected, don't modify the pixels
-    if (type === 'normal') return;
-    
-    // Simulation matrices for different types of color blindness
-    // These matrices transform RGB values to simulate how colors appear to people with CVD
+function clamp(value) {
+    return Math.max(0, Math.min(255, Math.round(value)));
+}
+
+/**
+ * Get the appropriate color transformation matrix for a CVD type
+ */
+function getCVDMatrix(cvdType) {
     const matrices = {
+        // More pronounced effects for better visualization
         deuteranomaly: [ // Green-weak
             0.80, 0.20, 0.00,
             0.25, 0.75, 0.00,
@@ -157,80 +359,31 @@ function simulateCVD(pixels, type) {
             0.95, 0.05, 0.00,
             0.00, 0.85, 0.15,
             0.00, 0.10, 0.90
+        ],
+        normal: [
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
         ]
     };
     
-    // Get the simulation matrix for the selected type
-    const matrix = matrices[type];
+    return matrices[cvdType] || matrices.normal;
+}
+
+/**
+ * Apply a color transformation matrix to image data
+ */
+function applyColorMatrix(pixels, matrix) {
+    const length = pixels.length;
     
-    // Apply the transformation matrix to each pixel
-    for (let i = 0; i < pixels.length; i += 4) {
+    for (let i = 0; i < length; i += 4) {
         const r = pixels[i];
         const g = pixels[i + 1];
         const b = pixels[i + 2];
         
-        // Matrix multiplication to transform colors
-        pixels[i] = r * matrix[0] + g * matrix[1] + b * matrix[2];       // New R
-        pixels[i + 1] = r * matrix[3] + g * matrix[4] + b * matrix[5];   // New G
-        pixels[i + 2] = r * matrix[6] + g * matrix[7] + b * matrix[8];   // New B
-        // Alpha channel (pixels[i + 3]) remains unchanged
-    }
-}
-
-/**
- * Apply colorblindness simulation with lens correction to image data
- * @param {Uint8ClampedArray} pixels - The image pixel data
- * @param {string} type - The type of CVD to simulate
- * @param {number} lensStrength - The strength of the correction (0-1)
- */
-function simulateCVDWithCorrection(pixels, type, lensStrength) {
-    // If normal vision is selected or lens strength is 0, just apply the CVD simulation
-    if (type === 'normal' || lensStrength === 0) {
-        simulateCVD(pixels, type);
-        return;
-    }
-    
-    // First copy the pixels to preserve original data
-    const originalPixels = new Uint8ClampedArray(pixels);
-    
-    // Apply the CVD simulation
-    simulateCVD(pixels, type);
-    
-    // Apply lens correction based on the type of CVD
-    for (let i = 0; i < pixels.length; i += 4) {
-        // Get the original and simulated colors
-        const origR = originalPixels[i];
-        const origG = originalPixels[i + 1];
-        const origB = originalPixels[i + 2];
-        
-        const simR = pixels[i];
-        const simG = pixels[i + 1];
-        const simB = pixels[i + 2];
-        
-        // Calculate the difference between original and simulated colors
-        const diffR = origR - simR;
-        const diffG = origG - simG;
-        const diffB = origB - simB;
-        
-        // Apply different corrections based on the type of CVD
-        switch (type) {
-            case 'deuteranomaly': // Green weakness - enhance green
-                pixels[i] = Math.max(0, Math.min(255, simR));
-                pixels[i + 1] = Math.max(0, Math.min(255, simG + diffG * lensStrength * 1.5));
-                pixels[i + 2] = Math.max(0, Math.min(255, simB));
-                break;
-                
-            case 'protanomaly': // Red weakness - enhance red
-                pixels[i] = Math.max(0, Math.min(255, simR + diffR * lensStrength * 1.5));
-                pixels[i + 1] = Math.max(0, Math.min(255, simG));
-                pixels[i + 2] = Math.max(0, Math.min(255, simB));
-                break;
-                
-            case 'tritanomaly': // Blue weakness - enhance blue
-                pixels[i] = Math.max(0, Math.min(255, simR));
-                pixels[i + 1] = Math.max(0, Math.min(255, simG));
-                pixels[i + 2] = Math.max(0, Math.min(255, simB + diffB * lensStrength * 1.5));
-                break;
-        }
+        pixels[i] = clamp(r * matrix[0] + g * matrix[1] + b * matrix[2]);
+        pixels[i + 1] = clamp(r * matrix[3] + g * matrix[4] + b * matrix[5]);
+        pixels[i + 2] = clamp(r * matrix[6] + g * matrix[7] + b * matrix[8]);
+        // Alpha remains unchanged
     }
 }

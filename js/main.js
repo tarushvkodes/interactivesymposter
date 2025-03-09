@@ -3,8 +3,14 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Smooth scrolling for navigation links
-    setupSmoothScrolling();
+    // Initialize smooth scroll behavior
+    initSmoothScroll();
+    
+    // Initialize navigation effects
+    initNavigationEffects();
+    
+    // Initialize section animations
+    initSectionAnimations();
     
     // Set up the expected results chart
     setupExpectedResultsChart();
@@ -19,25 +25,123 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFM100Example();
 });
 
-/**
- * Sets up smooth scrolling for navigation links
- */
-function setupSmoothScrolling() {
-    const navLinks = document.querySelectorAll('.poster-nav a');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+function initSmoothScroll() {
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            
             const targetId = this.getAttribute('href');
             const targetElement = document.querySelector(targetId);
             
-            window.scrollTo({
-                top: targetElement.offsetTop - 80,
-                behavior: 'smooth'
-            });
+            if (targetElement) {
+                const headerOffset = 80;
+                const elementPosition = targetElement.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+                
+                // Update URL without jumping
+                history.pushState(null, null, targetId);
+            }
         });
     });
+}
+
+function initNavigationEffects() {
+    const nav = document.querySelector('.poster-nav');
+    const navItems = document.querySelectorAll('.poster-nav a');
+    let lastScrollY = window.scrollY;
+    
+    // Navigation scroll effect
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+        
+        // Add blur effect when scrolling
+        if (currentScrollY > 0) {
+            nav.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
+            nav.style.backdropFilter = 'saturate(180%) blur(20px)';
+        } else {
+            nav.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+            nav.style.backdropFilter = 'none';
+        }
+        
+        lastScrollY = currentScrollY;
+    });
+    
+    // Highlight current section in navigation
+    window.addEventListener('scroll', debounce(() => {
+        const scrollPosition = window.scrollY + 100;
+        
+        document.querySelectorAll('.poster-section').forEach(section => {
+            if (section.offsetTop <= scrollPosition && 
+                section.offsetTop + section.offsetHeight > scrollPosition) {
+                const currentId = section.getAttribute('id');
+                
+                navItems.forEach(item => {
+                    item.classList.remove('active');
+                    if (item.getAttribute('href') === `#${currentId}`) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, 100));
+}
+
+function initSectionAnimations() {
+    // Intersection Observer for section animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+    
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+                sectionObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+    
+    // Observe all sections
+    document.querySelectorAll('.poster-section').forEach(section => {
+        section.style.opacity = '0';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+        sectionObserver.observe(section);
+    });
+    
+    // Initialize interactive elements with subtle hover effects
+    document.querySelectorAll('.interactive-element, .info-box, .hypothesis').forEach(element => {
+        element.addEventListener('mouseover', function() {
+            this.style.transform = 'translateY(-4px)';
+            this.style.boxShadow = '0 6px 24px rgba(0, 0, 0, 0.12)';
+        });
+        
+        element.addEventListener('mouseout', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+}
+
+// Utility function for debouncing
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 /**
@@ -184,38 +288,31 @@ function setupModelViewer() {
     renderer.setSize(modelContainer.clientWidth, modelContainer.clientHeight);
     modelContainer.appendChild(renderer.domElement);
     
-    // Add lighting
+    // Add lighting for better realism
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
     directionalLight.position.set(0, 1, 1);
     scene.add(directionalLight);
     
-    // Create a simple lens geometry
-    const geometry = new THREE.CylinderGeometry(2, 2, 0.2, 32);
+    // Create a thin lens geometry without the frame
+    const geometry = new THREE.CylinderGeometry(2.5, 2.5, 0.1, 64);
     const material = new THREE.MeshPhysicalMaterial({
         color: 0x2ecc71,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.6,
         clearcoat: 1.0,
         clearcoatRoughness: 0.1,
-        roughness: 0.5,
-        metalness: 0.1,
-        reflectivity: 0.5,
-        transmission: 0.6
+        roughness: 0.2,
+        metalness: 0.0,
+        reflectivity: 0.8,
+        transmission: 0.8
     });
     
     const lens = new THREE.Mesh(geometry, material);
     lens.rotation.x = Math.PI / 2;
     scene.add(lens);
-    
-    // Add a frame for the glasses
-    const frameGeometry = new THREE.TorusGeometry(2.1, 0.1, 16, 100);
-    const frameMaterial = new THREE.MeshStandardMaterial({ color: 0x2c3e50 });
-    const frame = new THREE.Mesh(frameGeometry, frameMaterial);
-    frame.rotation.x = Math.PI / 2;
-    scene.add(frame);
     
     // Add interaction - rotation on mouse move
     modelContainer.addEventListener('mousemove', (event) => {
@@ -225,17 +322,12 @@ function setupModelViewer() {
         
         lens.rotation.y = x * 2;
         lens.rotation.z = y;
-        frame.rotation.y = x * 2;
-        frame.rotation.z = y;
     });
     
     // Animation loop
     function animate() {
         requestAnimationFrame(animate);
-        
         lens.rotation.y += 0.001;
-        frame.rotation.y += 0.001;
-        
         renderer.render(scene, camera);
     }
     
@@ -273,61 +365,24 @@ function setupIshiharaExample() {
     const container = document.getElementById('ishihara-container');
     if (!container) return;
     
-    // Replace placeholder with an SVG representation of an Ishihara plate
+    // Replace placeholder with an actual image
     container.innerHTML = '';
     
-    // Create SVG
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('height', '250');
-    svg.setAttribute('viewBox', '0 0 400 400');
-    svg.style.backgroundColor = '#f5e5b8';
-    svg.style.borderRadius = '50%';
+    // Create image element
+    const img = document.createElement('img');
+    img.src = 'images/ishihara.png';
+    img.alt = 'Ishihara test plate';
+    img.style.maxWidth = '100%';
+    img.style.borderRadius = '50%';
+    img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
     
-    // Generate dots
-    const colors = [
-        '#7da877', // background dots (green)
-        '#ea9273'  // number dots (red-orange)
-    ];
+    // Handle image loading errors
+    img.onerror = function() {
+        console.error('Failed to load Ishihara image');
+        container.innerHTML = '<div class="ishihara-placeholder"></div>';
+    };
     
-    // Arrays of points that form the number 74
-    const numberPoints = [
-        // 7
-        [150, 100], [170, 100], [190, 100], [210, 100], [220, 120], [215, 140], [210, 160],
-        [205, 180], [200, 200], [195, 220], [190, 240], [185, 260], [180, 280], [175, 300],
-        // 4
-        [270, 100], [260, 130], [250, 160], [240, 190], [230, 220], [220, 250],
-        [240, 250], [260, 250], [280, 250], [300, 250],
-        [270, 130], [270, 160], [270, 190], [270, 220], [270, 280], [270, 310]
-    ];
-    
-    // Generate background dots
-    for (let i = 0; i < 1500; i++) {
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        
-        // Random position within circular boundary
-        const angle = Math.random() * 2 * Math.PI;
-        const radius = Math.random() * 190;
-        const x = 200 + radius * Math.cos(angle);
-        const y = 200 + radius * Math.sin(angle);
-        
-        const inNumber = numberPoints.some(point => {
-            const dx = point[0] - x;
-            const dy = point[1] - y;
-            return Math.sqrt(dx * dx + dy * dy) < 15;
-        });
-        
-        circle.setAttribute('cx', x);
-        circle.setAttribute('cy', y);
-        circle.setAttribute('r', Math.random() * 5 + 3);
-        
-        // Choose color based on whether it's part of the number
-        circle.setAttribute('fill', inNumber ? colors[1] : colors[0]);
-        
-        svg.appendChild(circle);
-    }
-    
-    container.appendChild(svg);
+    container.appendChild(img);
     
     // Add caption
     const caption = document.createElement('p');
@@ -345,31 +400,36 @@ function setupIshiharaExample() {
     button.style.cursor = 'pointer';
     
     let isDeuteranomaly = false;
-    button.addEventListener('click', () => {
+    button.addEventListener('click', function() {
         isDeuteranomaly = !isDeuteranomaly;
         button.textContent = isDeuteranomaly ? 'Normal View' : 'Simulate Deuteranomaly View';
         
-        // Change colors to simulate deuteranomaly
-        const circles = svg.querySelectorAll('circle');
-        circles.forEach(circle => {
-            if (isDeuteranomaly) {
-                if (circle.getAttribute('fill') === colors[1]) {
-                    circle.setAttribute('fill', '#ba9f7e'); // Red appears more brown
-                } else {
-                    circle.setAttribute('fill', '#baa87c'); // Green appears more brownish-yellow
-                }
-            } else {
-                const inNumber = numberPoints.some(point => {
-                    const dx = point[0] - parseFloat(circle.getAttribute('cx'));
-                    const dy = point[1] - parseFloat(circle.getAttribute('cy'));
-                    return Math.sqrt(dx * dx + dy * dy) < 15;
-                });
-                circle.setAttribute('fill', inNumber ? colors[1] : colors[0]);
-            }
-        });
+        // Apply a filter to simulate deuteranomaly
+        if (isDeuteranomaly) {
+            img.style.filter = 'url(#deuteranomaly-filter)';
+        } else {
+            img.style.filter = 'none';
+        }
     });
     
     container.appendChild(button);
+    
+    // Create SVG filter for deuteranomaly simulation
+    const filterSVG = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    filterSVG.style.width = '0';
+    filterSVG.style.height = '0';
+    filterSVG.style.position = 'absolute';
+    
+    const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+    filter.setAttribute('id', 'deuteranomaly-filter');
+    
+    const colorMatrix = document.createElementNS('http://www.w3.org/2000/svg', 'feColorMatrix');
+    colorMatrix.setAttribute('type', 'matrix');
+    colorMatrix.setAttribute('values', '0.8 0.2 0 0 0 0.25 0.75 0 0 0 0 0.3 0.7 0 0 0 0 0 1 0');
+    
+    filter.appendChild(colorMatrix);
+    filterSVG.appendChild(filter);
+    document.body.appendChild(filterSVG);
 }
 
 /**
