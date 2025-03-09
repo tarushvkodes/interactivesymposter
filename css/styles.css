@@ -160,10 +160,21 @@ body {
 /* Hypothesis Highlight */
 .hypothesis {
     background-color: #e8f4f8;
-    padding: 1.5rem;
+    padding: 1.8rem 1.5rem;
     border-radius: var(--border-radius);
-    margin: 1.5rem 0;
+    margin: 2rem 0;
     border-left: 4px solid var(--accent-color);
+}
+
+.hypothesis h3 {
+    margin-top: -0.3rem;
+    margin-bottom: 1rem;
+    color: var(--secondary-color);
+}
+
+.hypothesis p {
+    margin: 0;
+    line-height: 1.5;
 }
 
 /* Results Notice */
