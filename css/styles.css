@@ -1,0 +1,398 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --accent-color: #e74c3c;
+    --light-color: #ecf0f1;
+    --dark-color: #2c3e50;
+    --text-color: #333;
+    --link-color: #2980b9;
+    --border-radius: 5px;
+    --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Helvetica','Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: #f9f9f9;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Header Styles */
+.poster-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+}
+
+.poster-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.authors {
+    font-style: italic;
+    margin-top: 1rem;
+}
+
+/* Navigation Styles */
+.poster-nav {
+    background-color: var(--secondary-color);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.poster-nav ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.poster-nav li {
+    padding: 0 1rem;
+}
+
+.poster-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.poster-nav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+}
+
+/* Main Content Styles */
+.poster-content {
+    padding: 2rem 0;
+}
+
+.poster-section {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.poster-section h2 {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.poster-section h3 {
+    color: var(--secondary-color);
+    margin: 1.5rem 0 0.5rem;
+}
+
+/* Two Column Layout */
+.two-column {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.two-column > div {
+    flex: 1 1 400px;
+}
+
+/* Info Boxes */
+.info-box {
+    background-color: var(--light-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--secondary-color);
+}
+
+.info-box h3 {
+    margin-top: 0;
+}
+
+.info-box ul {
+    margin-left: 1.5rem;
+}
+
+/* Hypothesis Highlight */
+.hypothesis {
+    background-color: #e8f4f8;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin: 1.5rem 0;
+    border-left: 4px solid var(--accent-color);
+}
+
+/* Results Notice */
+.results-notice {
+    background-color: #fdebd0;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border: 2px dashed #f39c12;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Interactive Elements */
+.interactive-element {
+    background-color: #eaf2f8;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-top: 1.5rem;
+}
+
+/* Image Container */
+.image-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.image-box {
+    flex: 1 1 300px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.interactive-image {
+    margin-bottom: 0.5rem;
+}
+
+.interactive-image p {
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* Placeholder styles for images until JS loads them */
+.ishihara-placeholder, .fm100-placeholder {
+    height: 250px;
+    background-color: #eee;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-weight: bold;
+}
+
+.ishihara-placeholder::before {
+    content: "Ishihara Test Example";
+}
+
+.fm100-placeholder::before {
+    content: "FM100 Test Example";
+}
+
+/* Model Viewer */
+.model-viewer {
+    height: 400px;
+    background-color: #f5f5f5;
+    border-radius: var(--border-radius);
+    margin: 2rem 0;
+}
+
+.model-placeholder {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-weight: bold;
+}
+
+/* Data Visualization */
+.data-viz {
+    margin: 2rem 0;
+}
+
+#expected-results-chart {
+    height: 300px;
+    background-color: #f5f5f5;
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-weight: bold;
+}
+
+#expected-results-chart::before {
+    content: "Interactive Chart Will Appear Here";
+}
+
+/* CVD Simulation Section */
+.cvd-simulator {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.simulator-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.simulator-controls > div {
+    flex: 1 1 300px;
+}
+
+.simulator-controls label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.simulator-controls select,
+.simulator-controls input {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #ccc;
+}
+
+.simulation-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.simulation-view {
+    flex: 1 1 250px;
+    text-align: center;
+}
+
+.simulation-view h4 {
+    margin-bottom: 0.5rem;
+}
+
+.simulation-view canvas {
+    width: 100%;
+    height: 200px;
+    background-color: #eee;
+    border-radius: var(--border-radius);
+}
+
+.image-selector {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.image-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+}
+
+.image-option {
+    padding: 0.5rem 1rem;
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.image-option:hover {
+    background-color: var(--primary-color);
+}
+
+/* Future Work */
+.future-work {
+    background-color: #eaf2f8;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-top: 1.5rem;
+}
+
+.future-work ul {
+    margin-left: 1.5rem;
+}
+
+/* Citation List */
+.citation-list {
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.citation-list p {
+    margin-bottom: 0.75rem;
+    padding-left: 2rem;
+    text-indent: -2rem;
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark-color);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+footer p {
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .poster-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .poster-nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .poster-nav li {
+        margin-bottom: 0.5rem;
+    }
+
+    .poster-section {
+        padding: 1.5rem;
+    }
+
+    .simulator-controls {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}

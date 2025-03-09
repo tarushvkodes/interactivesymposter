@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitigating the Effects of Colorblindness using Alcohol Dyed 3D Printed Lenses</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <header class="poster-header">
+        <div class="container">
+            <h1>Mitigating the Effects of Colorblindness using Alcohol Dyed 3D Printed Lenses</h1>
+            <div class="authors">
+                <p>Julien Le Teigner and Tarushv C. Kosgi</p>
+                <p>AOS Jr Research</p>
+            </div>
+        </div>
+    </header>
+
+    <nav class="poster-nav">
+        <div class="container">
+            <ul>
+                <li><a href="#abstract">Abstract</a></li>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#methodology">Methodology</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#simulation">CVD Simulation</a></li>
+                <li><a href="#conclusion">Conclusion</a></li>
+                <li><a href="#citations">Citations</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="poster-content">
+        <div class="container">
+            <section id="abstract" class="poster-section">
+                <h2>Abstract</h2>
+                <p>Color Vision Deficiency (CVD) glasses have become widely accessible, however, their one size fits all approach often limits their effectiveness. This study explores a novel design for customizable CVD glasses that use bespoke 3D printed colored flat lenses in order to compensate for individual deficits in color perception. The system employs alcohol dyes to color the lenses in order to compensate for the lack of perception of that color in the individual, aiming to bring the perception of that color up to normal levels by "forcing in" more of that light.</p>
+            </section>
+
+            <section id="introduction" class="poster-section">
+                <h2>Introduction</h2>
+                <div class="two-column">
+                    <div>
+                        <p>Color Vision Deficiency (CVD) occurs when someone is missing one of three color detecting cones in their eyes.</p>
+                        <p>To solve this problem, researchers have developed CVD glasses, with the aim of improving the color vision of people with CVD. The issues are that current CVD glasses are "one size fits all", and usually very expensive. Not only does the "One size fits all" approach lead to CVD glasses being ineffective for the majority of the CVD population, but the high price means that many people can not afford CVD glasses regardless.</p>
+                        <p>CVD affects roughly 4.25% or 344 million people world wide.</p>
+                        <p>CVD can prevent people from getting jobs such as being a pilot, doctor, chef, electrician, or anything that involves color detection. Additionally, people with CVD can struggle to determine when fruit is ripe, meat is cooked adequately, and when food has gone bad. These can pose serious health risks, which is why developing adequate CVD lenses is important.</p>
+                    </div>
+                    <div>
+                        <div class="cvd-types info-box">
+                            <h3>Types of Color Vision Deficiency</h3>
+                            <ul>
+                                <li><strong>Deuteranomaly</strong>: Reduced sensitivity to green light</li>
+                                <li><strong>Protanomaly</strong>: Reduced sensitivity to red light</li>
+                                <li><strong>Tritanomaly</strong>: Reduced sensitivity to blue light</li>
+                            </ul>
+                        </div>
+                        <div class="cvd-impact info-box">
+                            <h3>Impact of CVD</h3>
+                            <ul>
+                                <li>Career limitations</li>
+                                <li>Daily challenges with color-coded information</li>
+                                <li>Safety concerns (ripe food, cooked meat, traffic signals)</li>
+                                <li>Educational disadvantages</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p>To solve the issue of having expensive, ineffective CVD glasses, our design uses interchangeable, 3d printed, green lenses. The glasses consists of one lens on each eye, that is dyed with a mixture of green alcohol dye and 91% isopropyl alcohol. The higher the concentration of isopropyl alcohol, the weaker the green color will be, and vice-versa. By using resin and cheap alcohol dyes to make the lenses, our CVD glasses are adjustable, cheap, and can be fabricated at home.</p>
+                <div class="hypothesis">
+                    <h3>Hypothesis</h3>
+                    <p>We hypothesize that by using 3d printable resin and cheap alcohol dye, we can mitigate the effects of CVD in individuals with deuteranomaly.</p>
+                </div>
+            </section>
+
+            <section id="methodology" class="poster-section">
+                <h2>Methodology</h2>
+                <div class="two-column">
+                    <div>
+                        <h3>Independent variable</h3>
+                        <p>The concentration of green alcohol dye used in each lens.</p>
+                        
+                        <h3>Dependent variable</h3>
+                        <p>The score obtained on the ishihara and FM100 tests.</p>
+                        
+                        <h3>Constants</h3>
+                        <p>The amount of light in the testing room, the position of the glasses on my head, and the tests used to measure the effectiveness of the glasses.</p>
+                        
+                        <h3>Control</h3>
+                        <p>The score obtained on the ishihara and FM100 tests without the glasses.</p>
+                        
+                        <h3>Repeated trials</h3>
+                        <p>Taking the Ishihara CVD test 20 times without glasses for control, and 10 times each time for testing the glasses. If the Ishihara test suggests a change, then the FM100 test will be used to obtain more accurate results.</p>
+                    </div>
+                    <div>
+                        <h3>Materials</h3>
+                        <ul>
+                            <li>Formlabs V4 clear resin</li>
+                            <li>Formlabs 2b printer</li>
+                            <li>Pinata lime green alcohol dye</li>
+                            <li>91% isopropyl alcohol</li>
+                            <li>Ishihara CVD test</li>
+                            <li>FM100 CVD test</li>
+                            <li>Lux meter</li>
+                            <li>Tape/glue</li>
+                            <li>Scissors</li>
+                            <li>Pipette</li>
+                        </ul>
+                        
+                        <div class="interactive-element">
+                            <h3>Testing Procedure</h3>
+                            <ol>
+                                <li>Set up testing in a darkroom</li>
+                                <li>Take the Ishihara test twenty times without lenses and average the score</li>
+                                <li>Take the FM100 test without glasses for control</li>
+                                <li>Take the Ishihara test ten times with lenses and average the score</li>
+                                <li>If a significant difference is observed, test lenses with FM100 test</li>
+                                <li>Change dye concentration as needed and repeat tests</li>
+                                <li>Use T-test to determine statistical significance of results</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="image-container">
+                    <div class="image-box">
+                        <div id="ishihara-container" class="interactive-image">
+                            <!-- Ishihara image will be displayed here -->
+                            <div class="ishihara-placeholder"></div>
+                            <p>Sample plate from an Ishihara test</p>
+                        </div>
+                    </div>
+                    <div class="image-box">
+                        <div id="fm100-container" class="interactive-image">
+                            <!-- FM100 image will be displayed here -->
+                            <div class="fm100-placeholder"></div>
+                            <p>Example photo of an unsolved FM100 test</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results" class="poster-section">
+                <h2>Results</h2>
+                <div class="results-notice">
+                    <p>DUE TO SIGNIFICANT MATERIAL DELAYS, WE WERE UNABLE TO COLLECT ANY DATA IN TIME FOR THIS LAB MEETING. WE AIM TO HAVE DATA WITHIN THE NEXT 2 MONTHS, PRIOR TO THE FINAL SYMPOSIUM. WE CURRENTLY HAVE OUR 3D MODELS READY TO PRINT IF WE WANT TO DO CIRCULAR LENSES, AND WE ARE EXPLORING ALTERNATE METHODS THAT WOULD AVOID THE TRADEOFFS OF RESIN PRINTING, SUCH AS CREATING A MOLD OF SAFETY GLASSES, SETTING RESIN IN THE MOLD, CURING IT, AND DYING IT. THIS WOULD AVOID ISSUES SUCH AS RESIN WASTAGE, GRIEVOUS BODILY HARM, ETC.</p>
+                </div>
+                
+                <div id="lens-model-container" class="model-viewer">
+                    <!-- 3D model will be loaded here -->
+                    <div class="model-placeholder">3D Model of Lens Design</div>
+                </div>
+
+                <div class="data-viz">
+                    <h3>Expected Results Visualization</h3>
+                    <div id="expected-results-chart">
+                        <!-- Chart will be generated here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="simulation" class="poster-section">
+                <h2>CVD Simulation</h2>
+                <p>Experience how colorblindness affects vision and how our lenses might help:</p>
+                
+                <div class="cvd-simulator">
+                    <div class="simulator-controls">
+                        <div>
+                            <label for="cvd-type">Type of Colorblindness:</label>
+                            <select id="cvd-type">
+                                <option value="normal">Normal Vision</option>
+                                <option value="deuteranomaly" selected>Deuteranomaly (Green-Weak)</option>
+                                <option value="protanomaly">Protanomaly (Red-Weak)</option>
+                                <option value="tritanomaly">Tritanomaly (Blue-Weak)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="lens-strength">Lens Effect Strength:</label>
+                            <input type="range" id="lens-strength" min="0" max="100" value="0">
+                            <span id="lens-strength-value">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="simulation-container">
+                        <div class="simulation-view">
+                            <h4>Original Image</h4>
+                            <canvas id="original-canvas"></canvas>
+                        </div>
+                        <div class="simulation-view">
+                            <h4>With Colorblindness</h4>
+                            <canvas id="cvd-canvas"></canvas>
+                        </div>
+                        <div class="simulation-view">
+                            <h4>With Lens Correction</h4>
+                            <canvas id="corrected-canvas"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="image-selector">
+                        <p>Select an image to simulate:</p>
+                        <div class="image-options">
+                            <button class="image-option" data-image="nature">Nature</button>
+                            <button class="image-option" data-image="ishihara">Ishihara Plate</button>
+                            <button class="image-option" data-image="traffic">Traffic Lights</button>
+                            <button class="image-option" data-image="chart">Color Chart</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="conclusion" class="poster-section">
+                <h2>Conclusion</h2>
+                <p>In conclusion, we expect to find an optimal dye percentage to alleviate deuteranomaly by examining the Ishihara and FM100 results across multiple trials using statistical means. Our project's success would represent a significant advance in CVD glasses, and usher in a new era of bespoke CVD glasses that are more effective and accessible to more people. We hope to make our glasses as widespread and accessible as offerings like prescription glasses, helping those with CVD live their lives to the fullest.</p>
+
+                <div class="future-work">
+                    <h3>Future Work</h3>
+                    <ul>
+                        <li>Testing with a larger sample of participants with varying degrees of CVD</li>
+                        <li>Exploring different dye colors and combinations for other types of CVD</li>
+                        <li>Investigating alternative materials that may be more comfortable for extended wear</li>
+                        <li>Developing a standardized testing protocol for customizing CVD lenses</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="citations" class="poster-section">
+                <h2>Citations/Acknowledgements</h2>
+                <div class="citation-list">
+                    <p>Saba Hittini, et al. (2023). Fabrication of 3D‐Printed Contact Lenses and Their Potential as Color Blindness Ocular Aids. Macromolecular Materials and Engineering, 308(5). https://doi.org/10.1002/mame.202200601</p>
+                    <p>Alam, F., et al. (2022). Development of 3D‐Printed Glasses for Color Vision Deficiency. Advanced Engineering Materials, 2200211. https://doi.org/10.1002/adem.202200211</p>
+                    <p>Elsherif, M., et al. (2020). Contact Lenses for Color Vision Deficiency. Advanced Materials Technologies, 6(1), 2000797. https://doi.org/10.1002/admt.202000797</p>
+                    <p>Roostaei, N., & Hamidi, S. M. (2023). Two-dimensional biocompatible plasmonic contact lenses for color blindness correction. Scientific Reports, 13(1). https://doi.org/10.1038/s41598-023-36572-9</p>
+                    <p>Salih, A. E., Shanti, A., et al,. (2021). Silver Nanoparticle‐Loaded Contact Lenses for Blue‐Yellow Color Vision Deficiency. Physica Status Solidi (A), 2100294. https://doi.org/10.1002/pssa.202100294</p>
+                    <p>Jacob, L., et al,. (2024). Biogenic Gold Nanoparticle‐based Antibacterial Contact Lenses for Color Blindness Management. Advanced Engineering Materials. https://doi.org/10.1002/adem.202301242</p>
+                    <p>Alam, F., et al,. (2023). 3D printed intraocular lens for managing the color blindness. Additive Manufacturing Letters, 5, 100129. https://doi.org/10.1016/j.addlet.2023.100129</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 Julien Le Teigner and Tarushv C. Kosgi - AOS Jr Research</p>
+            <p>This interactive poster was designed for GitHub Pages</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/cvd-simulation.js"></script>
+    <script src="js/lens-effect.js"></script>
+</body>
+</html>
